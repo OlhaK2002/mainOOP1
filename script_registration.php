@@ -2,7 +2,7 @@
 
     session_start();
 
-    $error = 0;
+    $error = 0; 
 
     $link = mysqli_connect("127.0.0.1", "root", "root", "guest_book");
 
@@ -14,8 +14,9 @@
     $password2 = $_POST['Password2'];
 
     if($password1!=$password2){
-        echo 'Пароли не совпадают';
-        die;
+        $error++;
+        echo '<span style="color: red">Пароли не совпадают</span>'.'<br/>'.'<br/>';
+
     }
     $sql1 = mysqli_query($link,"SELECT * FROM `registor` WHERE `email`= '$email'");
 
