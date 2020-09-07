@@ -14,7 +14,6 @@ function getComment($arr)
     $sql = mysqli_query($link, "SELECT * FROM `comments` WHERE `parent_id`= $k");
 
     if($_SESSION["login"]!="" and $_SESSION["password1"]!="") {
-      // if($arr['parent_id']==0){echo '<li><div id="comment' . 0 . '"></div></li>';}
 
        echo ' 
          <div class="accordion" id="accordionExample">
@@ -66,9 +65,9 @@ function getComment($arr)
         <nav>
             <ul>
                 <li><a href="/">Главная</a></li>
-                <?php if($_SESSION["login"]=="" and $_SESSION["password1"]=="")echo '<li><a href="signin.html">Авторизация</a></li>'?>
-                <?php if($_SESSION["login"]=="" and $_SESSION["password1"]=="")echo '<li><a href="registration.html">Регистрация</a></li>'?>
-                <li><a href="exit.php">Выход</a></li>
+                <?php if($_SESSION["login"]=="" and $_SESSION["password1"]=="")echo '<li><a href="signin.php">Авторизация</a></li>'?>
+                <?php if($_SESSION["login"]=="" and $_SESSION["password1"]=="")echo '<li><a href="registration.php">Регистрация</a></li>'?>
+                <?php if($_SESSION["login"]!="" and $_SESSION["password1"]!="")echo '<li><a href="exit.php">Выход</a></li>';?>
 
             </ul>
         </nav>
@@ -80,7 +79,7 @@ function getComment($arr)
 //global $k;
 
 if(!($_SESSION["login"]!="" and $_SESSION["password1"]!="")) {
-    echo 'Для того чтобы оставить свой отзыв - '.'<a href="signin.html">войдите</a>'.' или '.'<a href="registration.html">зарегистрируйтеся</a>';
+    echo 'Для того чтобы оставить свой отзыв - '.'<a href="signin.php">войдите</a>'.' или '.'<a href="registration.php">зарегистрируйтеся</a>';
 }
 else{
     echo '        
