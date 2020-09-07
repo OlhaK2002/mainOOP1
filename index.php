@@ -1,27 +1,34 @@
 <?php
 
 session_start();
-
-global $link;
+$link = 'constant';
 include 'database.php';
 
-$sql= $link->query ("SELECT * FROM `comments` WHERE `parent_id`=0");
+
+$value =0;
+
+$sql=$link->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
+$sql->bindParam(':value', $value, PDO::PARAM_INT);
+$sql->execute();
 
 function getComment($arr)
 {
-    global $link;
+    $link = 'constant';
     include 'database.php';
-
 
     echo '<span style = "font-style: italic">'.$arr['author'] .'</span>'. '&nbsp' .'<span style="font-style: italic; color: lightseagreen">'. " (".$arr['data'] . ") ".'</span>'.'</br>' . '&nbsp' . '&nbsp' ;
     echo $arr["text"];
 
-    $k=$arr['id'];
-    $sql = $link->query("SELECT * FROM `comments` WHERE `parent_id`= $k");
+    $k = $arr['id'];
 
-    if($_SESSION["login"]!="" and $_SESSION["password1"]!="") {
 
-        echo ' 
+    $sql = $link->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
+    $sql->bindParam(':value', $k, PDO::PARAM_INT);
+    $sql->execute();
+
+    if($_SESSION["login"]!="" and $_SESSION["password1"]!=""){
+
+        echo '
          <div class="accordion" id="accordionExample">
             <div class="card">
                 <div class="card-header" id="heading' . $k . '">
@@ -36,11 +43,11 @@ function getComment($arr)
                           <textarea required name="text" id="text_id' . $k . '" class="form-control"></textarea></br>
                           <input type="hidden" id="parent_id' . $k . '" class="parent_id" name="parent_id" value="' . $k . '">
                           <button id="' . $k . '" type="submit" class="btn btn-light">Отправить</button>
-                         
+
                     </div>
                 </div>
-                </div><ul><li><div id="comment' . $k . '"></div></li></ul>';}
-
+                </div><ul><li><div id="comment' . $k . '"></div></li></ul>';
+    }
     $result = $sql->rowCount();
     if($result>0)
     {
