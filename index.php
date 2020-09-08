@@ -1,11 +1,11 @@
 <?php
 
 session_start();
-$link = 'constant';
+
 include 'database.php';
+$link = new PDO(PDO_DB, PDO_LOG, PDO_PAS);
 
-
-$value =0;
+$value = 0;
 
 $sql=$link->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
 $sql->bindParam(':value', $value, PDO::PARAM_INT);
@@ -13,21 +13,23 @@ $sql->execute();
 
 function getComment($arr)
 {
-    $link = 'constant';
-    include 'database.php';
+    $link = new PDO(PDO_DB, PDO_LOG, PDO_PAS);
+    $id = $arr['id'];
+    $sql0 = $link->prepare("SELECT * FROM `registor` INNER JOIN `comments` WHERE registor.user_id=comments.authorid AND comments.id=:id");
+    $sql0->bindParam(':id', $id, PDO::PARAM_STR);
+    $sql0->execute();
+    $arr0 = $sql0->FETCH(PDO::FETCH_ASSOC);
 
-    echo '<span style = "font-style: italic">'.$arr['author'] .'</span>'. '&nbsp' .'<span style="font-style: italic; color: lightseagreen">'. " (".$arr['data'] . ") ".'</span>'.'</br>' . '&nbsp' . '&nbsp' ;
-    echo $arr["text"];
+    echo '<span style = "font-style: italic">'.$arr0['login'] .'</span>'. '&nbsp' .'<span style="font-style: italic; color: lightseagreen">'. " (".$arr0['data'] . ") ".'</span>'.'</br>' . '&nbsp' . '&nbsp' ;
+    echo $arr0["text"];
 
     $k = $arr['id'];
-
 
     $sql = $link->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
     $sql->bindParam(':value', $k, PDO::PARAM_INT);
     $sql->execute();
 
     if($_SESSION["login"]!="" and $_SESSION["password1"]!=""){
-
         echo '
          <div class="accordion" id="accordionExample">
             <div class="card">

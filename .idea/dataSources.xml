@@ -1,23 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="registration" uuid="55fc591e-fa3c-4446-8c13-f35ec5713720">
+    <data-source source="LOCAL" name="guest_book@localhost" uuid="c373fcaa-d62b-45bf-8ef1-9544c90a7601">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://127.0.0.1:3306/guest_book?serverTimezone=UTC</jdbc-url>
-    </data-source>
-    <data-source source="LOCAL" name="comments" uuid="a453b94b-c8b8-409c-85a4-b5f53c29e6f3">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://127.0.0.1:3306/guest_book?serverTimezone=UTC</jdbc-url>
-    </data-source>
-    <data-source source="LOCAL" name="error" uuid="cfb147f6-29f0-4be0-a386-28e5534ffd56">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://127.0.0.1:3306/guest_book?serverTimezone=UTC</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3306/guest_book?serverTimezone=UTC</jdbc-url>
     </data-source>
   </component>
 </project>

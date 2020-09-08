@@ -1,23 +1,25 @@
 <?php
+
 session_start();
 
-$link = 'constant';
 include 'database.php';
+$link = new PDO(PDO_DB, PDO_LOG, PDO_PAS);
 
-$author=$_SESSION["login"];
+//$author=$_SESSION["login"];
 $text=$_POST["text"];
 $parent_id=$_POST["parent_id"];
+$authorid = $_SESSION['user_id'];
 
-if($text!="") {
 
-    $sql = $link->prepare("INSERT INTO `comments` (`author`, `text`, `parent_id`) VALUES (:author, :text, :parent_id)");
-    $sql->bindParam(':author', $author, PDO::PARAM_STR);
+if($text!="" && $_SESSION['user_id']!="") {
+
+    $sql = $link->prepare("INSERT INTO `comments` (`authorid`,`text`, `parent_id`) VALUES ( :authorid, :text, :parent_id)");
+    $sql->bindParam(':authorid', $authorid, PDO::PARAM_STR);
     $sql->bindParam(':text', $text, PDO::PARAM_STR);
     $sql->bindParam(':parent_id', $parent_id, PDO::PARAM_INT);
     $sql->execute();
 
-    $sql2 = $link->prepare("SELECT * FROM `comments` WHERE `author`=:author and `text`=:text and `parent_id`=:parent_id");
-    $sql2->bindParam(':author', $author, PDO::PARAM_STR);
+    $sql2 = $link->prepare("SELECT * FROM `comments` WHERE `text`=:text and `parent_id`=:parent_id");
     $sql2->bindParam(':text', $text, PDO::PARAM_STR);
     $sql2->bindParam(':parent_id', $parent_id, PDO::PARAM_INT);
     $sql2->execute();
@@ -25,8 +27,13 @@ if($text!="") {
     if($sql2)
     {
         $arr1 = $sql2->FETCH(PDO::FETCH_ASSOC);
+        $id = $arr1['id'];
+        $sql0 = $link->prepare("SELECT * FROM `registor` INNER JOIN `comments` WHERE registor.user_id=comments.authorid AND comments.id=:id");
+        $sql0->bindParam(':id', $id, PDO::PARAM_STR);
+        $sql0->execute();
+        $arr0 = $sql0->FETCH(PDO::FETCH_ASSOC);
 
-        echo '<span style = "font-style: italic">'.$author.'</span>'. '&nbsp' .'<span style="font-style: italic; color: lightseagreen">'." (".$arr1['data'].") ".'</span>'.'</br>' .$text.'<div class="accordion" id="accordionExample">
+        echo '<span style = "font-style: italic">'.$arr0['login'].'</span>'. '&nbsp' .'<span style="font-style: italic; color: lightseagreen">'." (".$arr0['data'].") ".'</span>'.'</br>' .$text.'<div class="accordion" id="accordionExample">
             <div class="card">
                 <div class="card-header" id="heading'.$arr1['id'].'">
                     <h2 class="mb-0">

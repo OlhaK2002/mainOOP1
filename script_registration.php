@@ -1,17 +1,17 @@
 <?php
 
 session_start();
-$count_A=0;$count_a=0;$count_0=0;
 
-$error = 0;
+include 'database.php';
+$link = new PDO(PDO_DB, PDO_LOG, PDO_PAS);
+
+$count_A=0;$count_a=0;$count_0=0;$error = 0;
+
 $_SESSION['error_email']="";
 $_SESSION['error_login']="";
 $_SESSION['error_passwords']="";
 $_SESSION['error_password']="";
 $_SESSION['error_password1']="";
-
-$link = 'constant';
-include 'database.php';
 
 $name = $_POST['Name'];
 $surname = $_POST['Surname'];
@@ -53,12 +53,11 @@ if(strlen($password1)<6) {
 
 for($i=0;$i<strlen($password1);$i++)
 {
-    if($password1[$i]>='A'&& $password1[$i]<='Z')$count_A++;
-    if($password1[$i]>='a'&& $password1[$i]<='z')$count_a++;
+    if(($password1[$i]>='A'&& $password1[$i]<='Z')||($password1[$i]>='А'&& $password1[$i]<='Я'))$count_A++;
+    if(($password1[$i]>='a'&& $password1[$i]<='z')||($password1[$i]>='а'&& $password1[$i]<='я'))$count_a++;
     if($password1[$i]>='0'&& $password1[$i]<='9')$count_0++;
 
 }
-
 
 if(!($count_A>0 && $count_a>0 && $count_0 >0)) {
     $error++;
@@ -78,8 +77,6 @@ else {
 
     $sql->execute();
 
-
-
     $sql1 = $link->prepare("SELECT * FROM `registor` WHERE `name`= :name and `surname`=:surname and `email`=:email and `login`=:login and `password1`=:password ");
     $sql1->bindParam(':name', $name, PDO::PARAM_STR );
     $sql1->bindParam(':surname', $surname, PDO::PARAM_STR);
@@ -94,9 +91,11 @@ else {
         echo "Что-то пошло не так( Попробуйте зарегистрироваться заново!";
     }
     else {
-        //echo "Регистрация успешно выполнена!";
+        $arr = $sql1->FETCH(PDO::FETCH_ASSOC);
         $_SESSION["login"] = $login;
         $_SESSION["password1"] = $password;
+        $_SESSION["user_id"] = $arr['user_id'];
+        $_SESSION['error']="";
         $_SESSION['error_email']="";
         $_SESSION['error_login']="";
         $_SESSION['error_passwords']="";
