@@ -2,141 +2,232 @@
 
 session_start();
 
+include 'database.php';
+$db = new DB;
+$db->Connect();
 
-//підключення до БД
-/*include 'database.php';
-$link = new PDO(PDO_DB, PDO_LOG, PDO_PAS);*/
-
-
-
-//присвоєння даним нулю
-/*$count_A=0;$count_a=0;$count_0=0;$error = 0;*/
-
-
-
-
-//Сесіям помилок встановлюю пустий рядок
-/*$_SESSION['error_email']="";
+$_SESSION['error_email']="";
 $_SESSION['error_login']="";
 $_SESSION['error_passwords']="";
 $_SESSION['error_password']="";
-$_SESSION['error_password1']="";*/
+$_SESSION['error_password1']="";
 
 
+class Registration
+{
+    protected $name;
+    protected $surname;
+    protected $email;
+    protected $login;
+    protected $password1;
+    protected $password2;
 
-//передача даних регістрації
-/*$name = $_POST['Name'];
-$surname = $_POST['Surname'];
-$email = $_POST['Email'];
-$login = $_POST['Login'];
-$password1 = $_POST['Password1'];
-$password2 = $_POST['Password2'];*/
-
-
-//варифікація
-
-
-        //перевірка email
-        /*$sql1 = $link->prepare("SELECT * FROM `registor` WHERE `email`= :email");
-        $sql1->bindParam(':email', $email, PDO::PARAM_STR);
-        $sql1->execute();
-
-        if($sql1->rowCount()>=1){
-            $error++;
-            $_SESSION['error_email'] = "Ваша почта уже используется другим пользователем";
-
-        }*/
-
-
-
-
-        //перевірка логіна
-        /*$sql2 = $link->prepare("SELECT * FROM `registor` WHERE `login`= :login");
-        $sql2->bindParam(':login', $login, PDO::PARAM_STR);
-        $sql2->execute();
-
-        if($sql2->rowCount()>=1){
-            $error++;
-            $_SESSION['error_login'] = "Ваш логин уже используется другим пользователем";
-        }*/
-
-
-
-        //перевірка пароля
-        /*if($password1!=$password2){
-            $error++;
-            $_SESSION['error_passwords'] = "Пароли не совпадают";
-
-        }
-
-        if(strlen($password1)<6) {
-            $error++;
-            $_SESSION['error_password'] = "Пароль должен быть не меньше шести символов";
-
-        }
-
-        for($i=0;$i<strlen($password1);$i++)
-        {
-            if(($password1[$i]>='A'&& $password1[$i]<='Z')||($password1[$i]>='А'&& $password1[$i]<='Я'))$count_A++;
-            if(($password1[$i]>='a'&& $password1[$i]<='z')||($password1[$i]>='а'&& $password1[$i]<='я'))$count_a++;
-            if($password1[$i]>='0'&& $password1[$i]<='9')$count_0++;
-
-
-
-            if(!($count_A>0 && $count_a>0 && $count_0 >0)) {
-            $error++;
-            $_SESSION['error_password1']="Пароль должен содержать цифры, а также символы верхнего и нижнего регистра";
-            }
-        }*/
-
-
-
-        if($error>0){header("Location: registration.php");}
-        else {
-
-     //хешування
-     /*$password = password_hash($password1, PASSWORD_DEFAULT);*/
-
-
-
-    //внесення даних в базу даних
-    /*$sql= $link->prepare("INSERT INTO `registor`(`name`,`surname`,`email`,`login`,`password1`) VALUES (:name, :surname, :email, :login, :password)");
-    $sql->bindParam(':name', $name, PDO::PARAM_STR);
-    $sql->bindParam(':surname', $surname, PDO::PARAM_STR);
-    $sql->bindParam(':email', $email, PDO::PARAM_STR);
-    $sql->bindParam(':login', $login, PDO::PARAM_STR);
-    $sql->bindParam(':password', $password, PDO::PARAM_STR);
-    $sql->execute();*/
-
-
-    //перевірка на внесені дані
-    /*$sql1 = $link->prepare("SELECT * FROM `registor` WHERE `name`= :name and `surname`=:surname and `email`=:email and `login`=:login and `password1`=:password ");
-    $sql1->bindParam(':name', $name, PDO::PARAM_STR );
-    $sql1->bindParam(':surname', $surname, PDO::PARAM_STR);
-    $sql1->bindParam(':email', $email, PDO::PARAM_STR);
-    $sql1->bindParam(':login', $login, PDO::PARAM_STR);
-    $sql1->bindParam(':password', $password, PDO::PARAM_STR);
-    $sql1->execute();*/
-
-
-    //результати регістрації
-    /*if(!$sql1)
+    public function __construct($name, $surname, $email, $login, $password1, $password2)
     {
-        echo "Что-то пошло не так( Попробуйте зарегистрироваться заново!";
+        $this->name = $name;
+        $this->surname = $surname;
+        $this->email = $email;
+        $this->login = $login;
+        $this->password1 = $password1;
+        $this->password2 = $password2;
     }
-    else {
-        $arr = $sql1->FETCH(PDO::FETCH_ASSOC);
-        $_SESSION["login"] = $login;
-        $_SESSION["password"] = $password;
-        $_SESSION["user_id"] = $arr['user_id'];
-        $_SESSION['error']="";
-        $_SESSION['error_email']="";
-        $_SESSION['error_login']="";
-        $_SESSION['error_passwords']="";
-        $_SESSION['error_password']="";
-        $_SESSION['error_password1']="";
-        header("Location: index.php");
-    }*/
-
+    public function getName()
+    {
+        return $this->name;
+    }
+    public function getSurname()
+    {
+        return $this->surname;
+    }
+    public function getEmail()
+    {
+        return $this->email;
+    }
+    public function getLogin()
+    {
+        return $this->login;
+    }
+    public function getPassword1()
+    {
+        return $this->password1;
+    }
+    public function getPassword2()
+    {
+        return $this->password2;
+    }
 
 }
+$_POST['Password1'];$_POST['Password2'];
+
+$registration = new Registration("{$_POST['Name']}","{$_POST['Surname']}","{$_POST['Email']}","{$_POST['Login']}","{$_POST['Password1']}","{$_POST['Password2']}");
+
+
+class Verification extends Registration
+{
+
+    protected $db;
+    protected $registration;
+    protected $sql;
+    protected $count_0=0;
+    protected $count_A=0;
+    protected $count_b=0;
+
+    public function __construct($db, $registration)
+    {
+        $this->db = $db;
+        $this->registration = $registration;
+    }
+
+    public function evidenceEmail()
+    {
+        $this->db->Connect();
+        $this->sql = $this->db->getConnect()->prepare("SELECT * FROM `registor` WHERE `email`= :email");
+        $this->sql->bindParam(':email',$this->registration->getEmail(),PDO::PARAM_STR);
+        $this->sql->execute();
+        if($this->sql->rowCount()>=1){$_SESSION['error_email'] = "Ваша почта уже используется другим пользователем";return false;}
+        else {return true;}
+    }
+
+    public function evidenceLogin()
+    {
+        $this->db->Connect();
+        $this->sql = $this->db->getConnect()->prepare("SELECT * FROM `registor` WHERE `login`= :login");
+        $this->sql->bindParam(':login',$this->registration->getLogin(),PDO::PARAM_STR);
+        $this->sql->execute();
+        if($this->sql->rowCount()>=1){$_SESSION['error_login'] = "Ваш логин уже используется другим пользователем";return false;}
+        else {return true;}
+    }
+
+    public function evidencePasswords()
+    {
+        if($this->registration->getPassword1()!=$this->registration->getPassword2()){$_SESSION['error_passwords'] = "Пароли не совпадают";return false;}
+        else {return true;}
+    }
+
+    public function evidencePassword()
+    {
+        if(strlen($this->registration->getPassword1())<6) {$_SESSION['error_password'] = "Пароль должен быть не меньше шести символов";return false;}
+        else {return true;}
+    }
+
+    public function evidencePassword1()
+    {
+
+        for($i=0;$i<strlen($this->registration->getPassword1());$i++) {
+            if ($this->registration->getPassword1()[$i] >= 'A' && $this->registration->getPassword1()[$i] <= 'Z') $this->count_A++;
+            if ($this->registration->getPassword1()[$i] >= 'a' && $this->registration->getPassword1()[$i] <= 'z') $this->count_b++;
+            if ($this->registration->getPassword1()[$i] >= '0' && $this->registration->getPassword1()[$i] <= '9') $this->count_0++;
+        }
+        if(!($this->count_A>0 && $this->count_b>0 && $this->count_0 >0)) {
+                $_SESSION['error_password1']="Пароль должен содержать цифры, а также символы верхнего и нижнего регистра";
+                return false;
+        }
+        else return true;
+    }
+
+}
+
+$verification = new Verification($db, $registration);
+$verification->evidenceEmail();
+$verification->evidenceLogin();
+$verification->evidencePasswords();
+$verification->evidencePassword();
+$verification->evidencePassword1();
+
+class hashPassword extends Verification
+{
+    protected $password;
+    protected $verification;
+
+    public function __construct($verification)
+    {
+        $this->verification = $verification;
+    }
+
+    public function hash()
+    {
+        $this->password = password_hash('$this->verification->registration->getPassword1()', PASSWORD_DEFAULT);
+        return $this->password;
+    }
+}
+
+$password_hash = new hashPassword($verification);
+
+class procedureDB extends Verification
+{
+    protected $verification;
+    protected $password;
+    public function __construct($verification, $password_hash)
+    {
+        $this->verification = $verification;
+        $this->password = $password_hash;
+    }
+    public function intoDB()
+    {
+        if(($this->verification->evidenceEmail())&&($this->verification->evidenceLogin())&&($this->verification->evidencePasswords())&&($this->verification->evidencePassword())&&($this->verification->evidencePassword1()))
+        {
+            $sql= $this->verification->db->getConnect()->prepare("INSERT INTO `registor`(`name`,`surname`,`email`,`login`,`password1`) VALUES (:name, :surname, :email, :login, :password)");
+            $sql->bindParam(':name', $this->verification->registration->getName(), PDO::PARAM_STR);
+            $sql->bindParam(':surname', $this->verification->registration->getSurname(), PDO::PARAM_STR);
+            $sql->bindParam(':email', $this->verification->registration->getEmail(), PDO::PARAM_STR);
+            $sql->bindParam(':login', $this->verification->registration->getLogin(), PDO::PARAM_STR);
+            $sql->bindParam(':password', $this->password, PDO::PARAM_STR);
+            $sql->execute();
+            return true;
+        }
+        else return false;
+    }
+
+    public function evidenceDB()
+    {
+
+            $sql = $this->verification->db->getConnect()->prepare("SELECT * FROM `registor` WHERE `name`= :name and `surname`=:surname and `email`=:email and `login`=:login and `password1`=:password ");
+            $sql->bindParam(':name', $this->verification->registration->getName(), PDO::PARAM_STR);
+            $sql->bindParam(':surname', $this->verification->registration->getSurname(), PDO::PARAM_STR);
+            $sql->bindParam(':email', $this->verification->registration->getEmail(), PDO::PARAM_STR);
+            $sql->bindParam(':login', $this->verification->registration->getLogin(), PDO::PARAM_STR);
+            $sql->bindParam(':password', $this->password, PDO::PARAM_STR);
+            $sql->execute();
+            return $sql;
+
+    }
+
+}
+
+$procedureDB = new procedureDB($verification, $password_hash->hash());
+
+
+class Result1 extends procedureDB
+{
+    private $procedure;
+    private $array;
+    public function __construct($procedure)
+    {
+        $this->procedure = $procedure;
+    }
+    public function getResult()
+    {
+        if($this->procedure->intoDB())
+        {
+            $this->array = $this->procedure->evidenceDB()->FETCH(PDO::FETCH_ASSOC);
+            $_SESSION["login"] = $this->procedure->verification->registration->getLogin();
+            $_SESSION["password"] = $this->procedure->password;
+            $_SESSION["user_id"] = $this->array['user_id'];
+            $_SESSION['error_email']="";
+            $_SESSION['error_login']="";
+            $_SESSION['error_passwords']="";
+            $_SESSION['error_password']="";
+            $_SESSION['error_password1']="";
+            header("Location: index.php");
+
+        }
+       else header("Location: registration.php");
+
+    }
+
+}
+$result = new Result1($procedureDB);
+$result->getResult();
+
+
+

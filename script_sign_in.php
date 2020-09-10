@@ -2,15 +2,10 @@
 
 session_start();
 
-
-//підключення до БД
 include 'database.php';
 $db = new DB;
 $db->Connect();
 
-
-//підключення сесії і присвоєння сесії помилок значення 0
-/*$_SESSION['error']="";*/
 
 class Authorization
 {
@@ -33,14 +28,11 @@ class Authorization
     }
 
 }
-//передача даних авторизації
+
 $authorization = new Authorization("{$_POST['login1']}", "{$_POST['password2']}");
 
-
-//перевірка на наявність логіну і пароля в базі даних
 class Verification extends Authorization
 {
-
     protected $db;
     protected $authorization;
     protected $sql;
@@ -71,8 +63,6 @@ class Verification extends Authorization
 $verification = new Verification($db, $authorization);
 $verification->Evidence();
 
-
-//результати авторизації
 class Result extends Verification
 {
     private $verification;
