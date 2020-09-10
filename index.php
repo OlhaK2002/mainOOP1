@@ -3,7 +3,8 @@
 session_start();
 
 include 'database.php';
-$link = new PDO(PDO_DB, PDO_LOG, PDO_PAS);
+$db = new DB;
+$db->Connect();
 
 $value = 0;
 
