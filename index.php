@@ -8,15 +8,17 @@ $db->Connect();
 
 $value = 0;
 
-$sql=$link->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
+$sql=$db->getConnect()->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
 $sql->bindParam(':value', $value, PDO::PARAM_INT);
 $sql->execute();
 
 function getComment($arr)
 {
-    $link = new PDO(PDO_DB, PDO_LOG, PDO_PAS);
+
+    $db = new DB;
+    $db->Connect();
     $id = $arr['id'];
-    $sql0 = $link->prepare("SELECT * FROM `registor` INNER JOIN `comments` WHERE registor.user_id=comments.authorid AND comments.id=:id");
+    $sql0 = $db->getConnect()->prepare("SELECT * FROM `registor` INNER JOIN `comments` WHERE registor.user_id=comments.authorid AND comments.id=:id");
     $sql0->bindParam(':id', $id, PDO::PARAM_STR);
     $sql0->execute();
     $arr0 = $sql0->FETCH(PDO::FETCH_ASSOC);
@@ -26,18 +28,19 @@ function getComment($arr)
 
     $k = $arr['id'];
 
-    $sql = $link->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
+    $sql = $db->getConnect()->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
     $sql->bindParam(':value', $k, PDO::PARAM_INT);
     $sql->execute();
 
-    if($_SESSION["login"]!="" and $_SESSION["password1"]!=""){
-        echo '
-         <div class="accordion" id="accordionExample">
+    if($_SESSION["login"]!="" and $_SESSION["password"]!=""){
+
+        echo ' 
+            <div class="accordion" id="accordionExample">
             <div class="card">
                 <div class="card-header" id="heading' . $k . '">
                     <h2 class="mb-0">
                      <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" aria-expanded="false" data-target="#collapse_' . $k . '" aria-controls="collapse_' . $k . '">
-                      Ответить
+            Ответить
                     </button>
                     </h2>
                 </div>
@@ -82,9 +85,9 @@ function getComment($arr)
         <nav>
             <ul>
                 <li><a href="/">Главная</a></li>
-                <?php if($_SESSION["login"]=="" and $_SESSION["password1"]=="")echo '<li><a href="signin.php">Авторизация</a></li>'?>
-                <?php if($_SESSION["login"]=="" and $_SESSION["password1"]=="")echo '<li><a href="registration.php">Регистрация</a></li>'?>
-                <?php if($_SESSION["login"]!="" and $_SESSION["password1"]!="")echo '<li><a href="exit.php">Выход</a></li>';?>
+                <?php if($_SESSION["login"]=="" and $_SESSION["password"]=="")echo '<li><a href="signin.php">Авторизация</a></li>'?>
+                <?php if($_SESSION["login"]=="" and $_SESSION["password"]=="")echo '<li><a href="registration.php">Регистрация</a></li>'?>
+                <?php if($_SESSION["login"]!="" and $_SESSION["password"]!="")echo '<li><a href="exit.php">Выход</a></li>';?>
 
             </ul>
         </nav>
@@ -93,7 +96,7 @@ function getComment($arr)
 <hr>
 <?php
 
-if(!($_SESSION["login"]!="" and $_SESSION["password1"]!="")) {
+if(!($_SESSION["login"]!="" and $_SESSION["password"]!="")) {
     echo 'Для того чтобы оставить свой отзыв - '.'<a href="signin.php">войдите</a>'.' или '.'<a href="registration.php">зарегистрируйтеся</a>';
 }
 

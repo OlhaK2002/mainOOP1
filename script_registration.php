@@ -166,13 +166,13 @@ class procedureDB extends Verification
     {
         if(($this->verification->evidenceEmail())&&($this->verification->evidenceLogin())&&($this->verification->evidencePasswords())&&($this->verification->evidencePassword())&&($this->verification->evidencePassword1()))
         {
-            $sql= $this->verification->db->getConnect()->prepare("INSERT INTO `registor`(`name`,`surname`,`email`,`login`,`password1`) VALUES (:name, :surname, :email, :login, :password)");
-            $sql->bindParam(':name', $this->verification->registration->getName(), PDO::PARAM_STR);
-            $sql->bindParam(':surname', $this->verification->registration->getSurname(), PDO::PARAM_STR);
-            $sql->bindParam(':email', $this->verification->registration->getEmail(), PDO::PARAM_STR);
-            $sql->bindParam(':login', $this->verification->registration->getLogin(), PDO::PARAM_STR);
-            $sql->bindParam(':password', $this->password, PDO::PARAM_STR);
-            $sql->execute();
+            $this->sql= $this->verification->db->getConnect()->prepare("INSERT INTO `registor`(`name`,`surname`,`email`,`login`,`password1`) VALUES (:name, :surname, :email, :login, :password)");
+            $this->sql->bindParam(':name', $this->verification->registration->getName(), PDO::PARAM_STR);
+            $this->sql->bindParam(':surname', $this->verification->registration->getSurname(), PDO::PARAM_STR);
+            $this->sql->bindParam(':email', $this->verification->registration->getEmail(), PDO::PARAM_STR);
+            $this->sql->bindParam(':login', $this->verification->registration->getLogin(), PDO::PARAM_STR);
+            $this->sql->bindParam(':password', $this->password, PDO::PARAM_STR);
+            $this->sql->execute();
             return true;
         }
         else return false;
@@ -181,14 +181,14 @@ class procedureDB extends Verification
     public function evidenceDB()
     {
 
-            $sql = $this->verification->db->getConnect()->prepare("SELECT * FROM `registor` WHERE `name`= :name and `surname`=:surname and `email`=:email and `login`=:login and `password1`=:password ");
-            $sql->bindParam(':name', $this->verification->registration->getName(), PDO::PARAM_STR);
-            $sql->bindParam(':surname', $this->verification->registration->getSurname(), PDO::PARAM_STR);
-            $sql->bindParam(':email', $this->verification->registration->getEmail(), PDO::PARAM_STR);
-            $sql->bindParam(':login', $this->verification->registration->getLogin(), PDO::PARAM_STR);
-            $sql->bindParam(':password', $this->password, PDO::PARAM_STR);
-            $sql->execute();
-            return $sql;
+            $this->sql = $this->verification->db->getConnect()->prepare("SELECT * FROM `registor` WHERE `name`= :name and `surname`=:surname and `email`=:email and `login`=:login and `password1`=:password ");
+            $this->sql->bindParam(':name', $this->verification->registration->getName(), PDO::PARAM_STR);
+            $this->sql->bindParam(':surname', $this->verification->registration->getSurname(), PDO::PARAM_STR);
+            $this->sql->bindParam(':email', $this->verification->registration->getEmail(), PDO::PARAM_STR);
+            $this->sql->bindParam(':login', $this->verification->registration->getLogin(), PDO::PARAM_STR);
+            $this->sql->bindParam(':password', $this->password, PDO::PARAM_STR);
+            $this->sql->execute();
+            return $this->sql;
 
     }
 
