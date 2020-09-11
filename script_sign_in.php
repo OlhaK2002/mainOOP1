@@ -70,6 +70,7 @@ class Result extends Verification
     {
         $this->verification = $verification;
     }
+
     public function valuePassword()
     {
         if($this->verification->password_verification){

@@ -3,6 +3,7 @@
 session_start();
 
 include 'database.php';
+include 'class_htmlCode.php';
 $db = new DB;
 $db->Connect();
 
@@ -19,6 +20,7 @@ class Comment{
 }
 
 $comment = new Comment("{$_POST['text']}", "{$_POST['parent_id']}", "{$_SESSION['user_id']}");
+
 
 class intoDB extends Comment
 {
@@ -89,25 +91,10 @@ class Result extends intoDB
            $this->sql->bindParam(':id', $this->id, PDO::PARAM_STR);
            $this->sql->execute();
            $this->array1 = $this->sql->FETCH(PDO::FETCH_ASSOC);
-            return
-                '<span style = "font-style: italic">'.$this->array1['login'].'</span>'. '&nbsp' .'<span style="font-style: italic; color: lightseagreen">'." (".$this->array1['data'].") ".'</span>'.'</br>' .$this->array1['text'].'<div class="accordion" id="accordionExample">
-            <div class="card">
-                <div class="card-header" id="heading'.$this->array1['id'].'">
-                    <h2 class="mb-0">
-                     <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" aria-expanded="false" data-target="#collapse_'.$this->array1['id'].'" aria-controls="collapse_'.$this->array1['id'].'">
-                Ответить
-                    </button>
-                    </h2>
-                </div>
-                <div id="collapse_'.$this->array1['id'].'" class="collapse" aria-labelledby="heading'.$this->array1['id'].'" data-parent="#accordionExample">
-                    <div class="card-body">
-                          <textarea required name="text" id="text_id'.$this->array1['id'].'" class="form-control"></textarea></br>
-                          <input type="hidden" id="parent_id'.$this->array1['id'].'" class="parent_id" name="parent_id" value="'.$this->array1['id'].'">
-                          <button id="'.$this->array1['id'].'" type="submit" class="btn btn-light">Отправить</button>
-                           
-                    </div>
-                </div>
-            </div><ul><li><div id="comment'.$this->array1['id'].'"></div></li></ul>';
+            echo '<span style = "font-style: italic">'.$this->array1['login'].'</span>'. '&nbsp' .'<span style="font-style: italic; color: lightseagreen">'." (".$this->array1['data'].") ".'</span>'.'</br>' .$this->array1['text'].'<div class="accordion" id="accordionExample">';
+            $reply = new Reply($this->array1['id']);
+            echo $reply->replyComment();
+            echo '</div><ul><li><div id="comment'.$this->array1['id'].'"></div></li></ul>';
 
         }
     }

@@ -213,18 +213,16 @@ class Result1 extends procedureDB
             $_SESSION["login"] = $this->procedure->verification->registration->getLogin();
             $_SESSION["password"] = $this->procedure->password;
             $_SESSION["user_id"] = $this->array['user_id'];
+            $_SESSION['error']="";
             $_SESSION['error_email']="";
             $_SESSION['error_login']="";
             $_SESSION['error_passwords']="";
             $_SESSION['error_password']="";
             $_SESSION['error_password1']="";
             header("Location: index.php");
-
         }
        else header("Location: registration.php");
-
     }
-
 }
 $result = new Result1($procedureDB);
 $result->getResult();
