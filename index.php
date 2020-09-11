@@ -12,7 +12,6 @@ class Comments
     protected $result;
     protected $value0;
     protected $sql0;
-    protected $sql1;
     protected $array;
     protected $index;
 
@@ -30,19 +29,24 @@ class Comments
         $this->sql->execute();
 
         $this->array = $this->sql->FETCH(PDO::FETCH_ASSOC);
-        echo '<span style = "font-style: italic">'.$this->array['login'] . '</span>' . '&nbsp' . '<span style="font-style: italic; color: lightseagreen">' . " (" . $this->array['data'] . ") " . '</span>' . '</br>' . '&nbsp' . '&nbsp' . $this->array["text"];
+        echo '<span style = "font-style: italic">' . $this->array['login'] . '</span>' . '&nbsp' . '<span style="font-style: italic; color: lightseagreen">' . " (" . $this->array['data'] . ") " . '</span>' . '</br>' . '&nbsp' . '&nbsp' . $this->array["text"];
         $this->index = $this->array['id'];
-        $this->sql1 = $this->db->getConnect()->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
-        $this->sql1->bindParam(':value', $this->index, PDO::PARAM_INT);
-        $this->sql1->execute();
+
+        $sql1 = $this->db->getConnect()->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
+        $sql1->bindParam(':value', $this->index, PDO::PARAM_INT);
+        $sql1->execute();
+
         if($_SESSION["login"]!="" and $_SESSION["password"]!=""){
             $reply = new Reply($this->index);
             echo $reply->replyComment();
             echo '</div><ul><li><div id="comment' . $this->index . '"></div></li></ul>';
         }
-        $this->result = $this->sql1->rowCount();
+
+        $this->result = $sql1->rowCount();
+
         if ($this->result > 0) {
-            while ($this->array = $this->sql1->FETCH(PDO::FETCH_ASSOC))
+
+            while ($this->array = $sql1->FETCH(PDO::FETCH_ASSOC))
             {
                 echo '<ul>';
                 $this->getComments($this->array);
@@ -84,8 +88,8 @@ if(!($_SESSION["login"]!="" and $_SESSION["password"]!="")) {
 
 else{
     echo ' <textarea required name="text" id="text_id0" class="form-control" placeholder="Введите Ваш комментарий..."></textarea>
-           <input type="hidden" id="parent_id0" class="parent" name="parent_id" value="0">
-           <button id="0" type="submit" class="btn btn-light">Отправить</button>';
+               <input type="hidden" id="parent_id0" class="parent" name="parent_id" value="0">
+               <button id="0" type="submit" class="btn btn-light">Отправить</button>';
 }
 $comments = new Comments($db);
 $comments->firstComments();

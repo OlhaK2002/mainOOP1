@@ -9,40 +9,40 @@ $db->Connect();
 
 class Comment{
     protected $text;
-    protected $parentid;
+    protected $parent_id;
     protected $authorid;
-    public function __construct($text, $parent_id, $author_id)
+    protected $db;
+    public function __construct($db, $text, $parent_id, $author_id)
     {
+        $this->db = $db;
         $this->text = $text;
-        $this->parentid = $parent_id;
+        $this->parent_id = $parent_id;
         $this->authorid = $author_id;
     }
 }
 
-$comment = new Comment("{$_POST['text']}", "{$_POST['parent_id']}", "{$_SESSION['user_id']}");
+$comment = new Comment($db, "{$_POST['text']}", "{$_POST['parent_id']}", "{$_SESSION['user_id']}");
 
 
 class intoDB extends Comment
 {
     protected $sql;
-    protected $comment;
     protected $db;
     protected $count = 0;
 
-    public function __construct($comment, $db)
+    public function __construct($db, $text, $parent_id, $author_id)
     {
-        $this->comment = $comment;
-        $this->db = $db;
+        parent::__construct($db, $text, $parent_id, $author_id);
     }
 
     public function into()
     {
-        if($this->comment->text!=""&&$this->comment->authorid!=""&&$this->count<1)
+        if($this->text!=""&&$this->authorid!=""&&$this->count<1)
         {
             $this->sql = $this->db->getConnect()->prepare("INSERT INTO `comments` (`authorid`,`text`, `parent_id`) VALUES ( :authorid, :text, :parent_id)");
-            $this->sql->bindParam(':authorid', $this->comment->authorid, PDO::PARAM_STR);
-            $this->sql->bindParam(':text', $this->comment->text, PDO::PARAM_STR);
-            $this->sql->bindParam(':parent_id', $this->comment->parentid, PDO::PARAM_INT);
+            $this->sql->bindParam(':authorid', $this->authorid, PDO::PARAM_STR);
+            $this->sql->bindParam(':text', $this->text, PDO::PARAM_STR);
+            $this->sql->bindParam(':parent_id', $this->parent_id, PDO::PARAM_INT);
             $this->sql->execute();
             $this->count++;
         }
@@ -54,15 +54,15 @@ class intoDB extends Comment
         if($this->into())
         {
             $this->sql = $this->db->getConnect()->prepare("SELECT * FROM `comments` WHERE `text`=:text and `parent_id`=:parent_id");
-            $this->sql->bindParam(':text', $this->comment->text, PDO::PARAM_STR);
-            $this->sql->bindParam(':parent_id', $this->comment->parentid, PDO::PARAM_INT);
+            $this->sql->bindParam(':text', $this->text, PDO::PARAM_STR);
+            $this->sql->bindParam(':parent_id', $this->parent_id, PDO::PARAM_INT);
             $this->sql->execute();
             return $this->sql;
         }
     }
 }
 
-$intoDB = new intoDB($comment, $db);
+$intoDB = new intoDB($db, "{$_POST['text']}", "{$_POST['parent_id']}", "{$_SESSION['user_id']}");
 
 
 class Result extends intoDB
@@ -71,21 +71,19 @@ class Result extends intoDB
     protected $array;
     protected $id;
     protected $sql;
-    protected $intoDB;
     protected $db;
     protected $array1;
 
-    public function __construct($intoDB, $db)
+    public function __construct($db,$text, $parent_id, $author_id)
     {
-        $this->intoDB = $intoDB;
-        $this->db = $db;
+        parent::__construct($db,$text, $parent_id, $author_id);
     }
 
     public function replyComment()
     {
-        if($this->intoDB->evidenceDB())
+        if($this->evidenceDB())
         {
-           $this->array = $this->intoDB->evidenceDB()->FETCH(PDO::FETCH_ASSOC);
+           $this->array = $this->evidenceDB()->FETCH(PDO::FETCH_ASSOC);
            $this->id = $this->array['id'];
            $this->sql = $this->db->getConnect()->prepare("SELECT * FROM `registor` INNER JOIN `comments` WHERE registor.user_id=comments.authorid AND comments.id=:id");
            $this->sql->bindParam(':id', $this->id, PDO::PARAM_STR);
@@ -100,8 +98,7 @@ class Result extends intoDB
     }
 }
 
-
-$result = new Result($intoDB, $db);
+$result = new Result($db,"{$_POST['text']}", "{$_POST['parent_id']}", "{$_SESSION['user_id']}");
 echo $result->replyComment();
 
 

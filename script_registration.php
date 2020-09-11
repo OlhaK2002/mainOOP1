@@ -5,9 +5,7 @@ session_start();
 include 'database.php';
 $db = new DB;
 $db->Connect();
-
-
-class Registration
+class Registration extends DB
 {
     protected $name;
     protected $surname;
@@ -15,8 +13,9 @@ class Registration
     protected $login;
     protected $password1;
     protected $password2;
+    protected $db;
 
-    public function __construct($name, $surname, $email, $login, $password1, $password2)
+    public function __construct($db, $name, $surname, $email, $login, $password1, $password2)
     {
         $this->name = $name;
         $this->surname = $surname;
@@ -24,59 +23,30 @@ class Registration
         $this->login = $login;
         $this->password1 = $password1;
         $this->password2 = $password2;
-    }
-    public function getName()
-    {
-        return $this->name;
-    }
-    public function getSurname()
-    {
-        return $this->surname;
-    }
-    public function getEmail()
-    {
-        return $this->email;
-    }
-    public function getLogin()
-    {
-        return $this->login;
-    }
-    public function getPassword1()
-    {
-        return $this->password1;
-    }
-    public function getPassword2()
-    {
-        return $this->password2;
-    }
+        $this->db = $db;
 
+    }
 }
-$_POST['Password1'];$_POST['Password2'];
 
-$registration = new Registration("{$_POST['Name']}","{$_POST['Surname']}","{$_POST['Email']}","{$_POST['Login']}","{$_POST['Password1']}","{$_POST['Password2']}");
-
+$registration = new Registration($db,"{$_POST['Name']}","{$_POST['Surname']}","{$_POST['Email']}","{$_POST['Login']}","{$_POST['Password1']}","{$_POST['Password2']}");
 
 class Verification extends Registration
 {
-
-    protected $db;
-    protected $registration;
     protected $sql;
     protected $count_0=0;
     protected $count_A=0;
     protected $count_b=0;
-
-    public function __construct($db, $registration)
+    public function __construct($db,$name, $surname, $email, $login, $password1, $password2)
     {
-        $this->db = $db;
-        $this->registration = $registration;
+        parent::__construct($db,$name, $surname, $email, $login, $password1, $password2);
+
     }
 
     public function evidenceEmail()
     {
-        $this->db->Connect();
+
         $this->sql = $this->db->getConnect()->prepare("SELECT * FROM `registor` WHERE `email`= :email");
-        $this->sql->bindParam(':email',$this->registration->getEmail(),PDO::PARAM_STR);
+        $this->sql->bindParam(':email',$this->email,PDO::PARAM_STR);
         $this->sql->execute();
         if($this->sql->rowCount()>=1){$_SESSION['error_email'] = "Ваша почта уже используется другим пользователем";return false;}
         else {return true;}
@@ -86,7 +56,7 @@ class Verification extends Registration
     {
         $this->db->Connect();
         $this->sql = $this->db->getConnect()->prepare("SELECT * FROM `registor` WHERE `login`= :login");
-        $this->sql->bindParam(':login',$this->registration->getLogin(),PDO::PARAM_STR);
+        $this->sql->bindParam(':login',$this->login,PDO::PARAM_STR);
         $this->sql->execute();
         if($this->sql->rowCount()>=1){$_SESSION['error_login'] = "Ваш логин уже используется другим пользователем";return false;}
         else {return true;}
@@ -94,23 +64,23 @@ class Verification extends Registration
 
     public function evidencePasswords()
     {
-        if($this->registration->getPassword1()!=$this->registration->getPassword2()){$_SESSION['error_passwords'] = "Пароли не совпадают";return false;}
+        if($this->password1!=$this->password2){$_SESSION['error_passwords'] = "Пароли не совпадают";return false;}
         else {return true;}
     }
 
     public function evidencePassword()
     {
-        if(strlen($this->registration->getPassword1())<6) {$_SESSION['error_password'] = "Пароль должен быть не меньше шести символов";return false;}
+        if(strlen($this->password1)<6) {$_SESSION['error_password'] = "Пароль должен быть не меньше шести символов";return false;}
         else {return true;}
     }
 
     public function evidencePassword1()
     {
 
-        for($i=0;$i<strlen($this->registration->getPassword1());$i++) {
-            if ($this->registration->getPassword1()[$i] >= 'A' && $this->registration->getPassword1()[$i] <= 'Z') $this->count_A++;
-            if ($this->registration->getPassword1()[$i] >= 'a' && $this->registration->getPassword1()[$i] <= 'z') $this->count_b++;
-            if ($this->registration->getPassword1()[$i] >= '0' && $this->registration->getPassword1()[$i] <= '9') $this->count_0++;
+        for($i=0;$i<strlen($this->password1);$i++) {
+            if ($this->password1[$i] >= 'A' && $this->password1[$i] <= 'Z') $this->count_A++;
+            if ($this->password1[$i] >= 'a' && $this->password1[$i] <= 'z') $this->count_b++;
+            if ($this->password1[$i] >= '0' && $this->password1[$i] <= '9') $this->count_0++;
         }
         if(!($this->count_A>0 && $this->count_b>0 && $this->count_0 >0)) {
                 $_SESSION['error_password1']="Пароль должен содержать цифры, а также символы верхнего и нижнего регистра";
@@ -121,7 +91,8 @@ class Verification extends Registration
 
 }
 
-$verification = new Verification($db, $registration);
+$verification = new Verification($db,"{$_POST['Name']}","{$_POST['Surname']}","{$_POST['Email']}","{$_POST['Login']}","{$_POST['Password1']}","{$_POST['Password2']}");
+
 $verification->evidenceEmail();
 $verification->evidenceLogin();
 $verification->evidencePasswords();
@@ -131,42 +102,40 @@ $verification->evidencePassword1();
 class hashPassword extends Verification
 {
     protected $password;
-    protected $verification;
-
-    public function __construct($verification)
+    public function __construct($db, $name, $surname, $email, $login, $password1, $password2)
     {
-        $this->verification = $verification;
+        parent::__construct($db, $name, $surname, $email, $login, $password1, $password2);
     }
 
     public function hash()
     {
-        $this->password = password_hash($this->verification->registration->getPassword1(), PASSWORD_DEFAULT);
+        $this->password = password_hash($this->password1, PASSWORD_DEFAULT);
         return $this->password;
     }
 }
 
-$password_hash = new hashPassword($verification);
+$password_hash = new hashPassword ($db,"{$_POST['Name']}","{$_POST['Surname']}","{$_POST['Email']}","{$_POST['Login']}","{$_POST['Password1']}","{$_POST['Password2']}");
 
 class procedureDB extends Verification
 {
-    protected $verification;
-    protected $password;
-    public function __construct($verification, $password_hash)
+    protected $password_hash;
+    protected $db;
+    public function __construct($db,$name, $surname, $email, $login, $password1, $password2, $password_hash)
     {
-        $this->verification = $verification;
-        $this->password = $password_hash;
-        //echo $password_hash;
+        parent::__construct($db, $name, $surname, $email, $login, $password1, $password2);
+        $this->password_hash = $password_hash;
     }
     public function intoDB()
     {
-        if(($this->verification->evidenceEmail())&&($this->verification->evidenceLogin())&&($this->verification->evidencePasswords())&&($this->verification->evidencePassword())&&($this->verification->evidencePassword1()))
+
+        if(($this->evidenceEmail())&&($this->evidenceLogin())&&($this->evidencePasswords())&&($this->evidencePassword())&&($this->evidencePassword1()))
         {
-            $this->sql= $this->verification->db->getConnect()->prepare("INSERT INTO `registor`(`name`,`surname`,`email`,`login`,`password1`) VALUES (:name, :surname, :email, :login, :password)");
-            $this->sql->bindParam(':name', $this->verification->registration->getName(), PDO::PARAM_STR);
-            $this->sql->bindParam(':surname', $this->verification->registration->getSurname(), PDO::PARAM_STR);
-            $this->sql->bindParam(':email', $this->verification->registration->getEmail(), PDO::PARAM_STR);
-            $this->sql->bindParam(':login', $this->verification->registration->getLogin(), PDO::PARAM_STR);
-            $this->sql->bindParam(':password', $this->password, PDO::PARAM_STR);
+            $this->sql= $this->db->getConnect()->prepare("INSERT INTO `registor`(`name`,`surname`,`email`,`login`,`password1`) VALUES (:name, :surname, :email, :login, :password)");
+            $this->sql->bindParam(':name', $this->name, PDO::PARAM_STR);
+            $this->sql->bindParam(':surname', $this->surname, PDO::PARAM_STR);
+            $this->sql->bindParam(':email', $this->email, PDO::PARAM_STR);
+            $this->sql->bindParam(':login', $this->login, PDO::PARAM_STR);
+            $this->sql->bindParam(':password', $this->password_hash, PDO::PARAM_STR);
             $this->sql->execute();
             return true;
         }
@@ -176,12 +145,12 @@ class procedureDB extends Verification
     public function evidenceDB()
     {
 
-            $this->sql = $this->verification->db->getConnect()->prepare("SELECT * FROM `registor` WHERE `name`= :name and `surname`=:surname and `email`=:email and `login`=:login and `password1`=:password ");
-            $this->sql->bindParam(':name', $this->verification->registration->getName(), PDO::PARAM_STR);
-            $this->sql->bindParam(':surname', $this->verification->registration->getSurname(), PDO::PARAM_STR);
-            $this->sql->bindParam(':email', $this->verification->registration->getEmail(), PDO::PARAM_STR);
-            $this->sql->bindParam(':login', $this->verification->registration->getLogin(), PDO::PARAM_STR);
-            $this->sql->bindParam(':password', $this->password, PDO::PARAM_STR);
+            $this->sql = $this->db->getConnect()->prepare("SELECT * FROM `registor` WHERE `name`= :name and `surname`=:surname and `email`=:email and `login`=:login and `password1`=:password ");
+            $this->sql->bindParam(':name', $this->name, PDO::PARAM_STR);
+            $this->sql->bindParam(':surname', $this->surname, PDO::PARAM_STR);
+            $this->sql->bindParam(':email', $this->email, PDO::PARAM_STR);
+            $this->sql->bindParam(':login', $this->login, PDO::PARAM_STR);
+            $this->sql->bindParam(':password', $this->password_hash, PDO::PARAM_STR);
             $this->sql->execute();
             return $this->sql;
 
@@ -189,24 +158,24 @@ class procedureDB extends Verification
 
 }
 
-$procedureDB = new procedureDB($verification, $password_hash->hash());
+$procedureDB = new procedureDB($db,"{$_POST['Name']}","{$_POST['Surname']}","{$_POST['Email']}","{$_POST['Login']}","{$_POST['Password1']}","{$_POST['Password2']}", $password_hash->hash());
 
 
 class Result1 extends procedureDB
 {
-    private $procedure;
     private $array;
-    public function __construct($procedure)
+
+    public function __construct($db,$name, $surname, $email, $login, $password1, $password2, $password_hash)
     {
-        $this->procedure = $procedure;
+        parent::__construct($db,$name, $surname, $email, $login, $password1, $password2, $password_hash);
     }
-    public function getResult()
+        public function getResult()
     {
-        if($this->procedure->intoDB())
+        if($this->intoDB())
         {
-            $this->array = $this->procedure->evidenceDB()->FETCH(PDO::FETCH_ASSOC);
-            $_SESSION["login"] = $this->procedure->verification->registration->getLogin();
-            $_SESSION["password"] = $this->procedure->password;
+            $this->array = $this->evidenceDB()->FETCH(PDO::FETCH_ASSOC);
+            $_SESSION["login"] = $this->login;
+            $_SESSION["password"] = $this->password_hash;
             $_SESSION["user_id"] = $this->array['user_id'];
             $_SESSION['error']="";
             $_SESSION['error_email']="";
@@ -219,8 +188,10 @@ class Result1 extends procedureDB
         else header("Location: registration.php");
     }
 }
-$result = new Result1($procedureDB);
+$result = new Result1($db,"{$_POST['Name']}","{$_POST['Surname']}","{$_POST['Email']}","{$_POST['Login']}","{$_POST['Password1']}","{$_POST['Password2']}", $password_hash->hash());;
 $result->getResult();
+
+
 
 
 
