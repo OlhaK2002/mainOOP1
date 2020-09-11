@@ -6,11 +6,6 @@ include 'database.php';
 $db = new DB;
 $db->Connect();
 
-$_SESSION['error_email']="";
-$_SESSION['error_login']="";
-$_SESSION['error_passwords']="";
-$_SESSION['error_password']="";
-$_SESSION['error_password1']="";
 
 
 class Registration
@@ -146,7 +141,7 @@ class hashPassword extends Verification
 
     public function hash()
     {
-        $this->password = password_hash('$this->verification->registration->getPassword1()', PASSWORD_DEFAULT);
+        $this->password = password_hash($this->verification->registration->getPassword1(), PASSWORD_DEFAULT);
         return $this->password;
     }
 }
@@ -161,6 +156,7 @@ class procedureDB extends Verification
     {
         $this->verification = $verification;
         $this->password = $password_hash;
+        //echo $password_hash;
     }
     public function intoDB()
     {
@@ -219,9 +215,9 @@ class Result1 extends procedureDB
             $_SESSION['error_passwords']="";
             $_SESSION['error_password']="";
             $_SESSION['error_password1']="";
-            header("Location: index.php");
+           header("Location: index.php");
         }
-       else header("Location: registration.php");
+        else header("Location: registration.php");
     }
 }
 $result = new Result1($procedureDB);

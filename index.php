@@ -75,6 +75,7 @@ if($_SESSION["login"]=="" and $_SESSION["password"]=="")echo '<li><a href="regis
 if($_SESSION["login"]!="" and $_SESSION["password"]!="")echo '<li><a href="exit.php">Выход</a></li>';
 
 echo $htmlCode->mainCode();
+
 if(!($_SESSION["login"]!="" and $_SESSION["password"]!="")) {
     echo 'Для того чтобы оставить свой отзыв - '.'<a href="signin.php">войдите</a>'.' или '.'<a href="registration.php">зарегистрируйтеся</a>';
 }

@@ -54,14 +54,15 @@ class Verification extends Authorization
         $this->sql->execute();
         $this->array = $this->sql->FETCH(PDO::FETCH_ASSOC);
         $this->hash=$this->array['password1'];
+        //echo $this->authorization->getPassword(). ' '.$this->hash;
         $this->password_verification = password_verify($this->authorization->getPassword(),$this->hash);
         return $this->password_verification;
+
     }
 
 }
 
 $verification = new Verification($db, $authorization);
-$verification->Evidence();
 
 class Result extends Verification
 {
@@ -73,14 +74,16 @@ class Result extends Verification
 
     public function valuePassword()
     {
-        if($this->verification->password_verification){
+        if($this->verification->Evidence()){
             $_SESSION["login"] = $this->verification->authorization->getLogin();
             $_SESSION["password"] = $this->verification->array['password1'];
             $_SESSION['error']="";
             $_SESSION['user_id'] = $this->verification->array['user_id'];
             header("Location: index.php");
         }
-        else {$_SESSION['error']="Неверно указан логин или пароль"; header("Location: signin.php");}
+        else {$_SESSION['error']="Неверно указан логин или пароль";
+        header("Location: signin.php");
+        }
     }
 
 }
