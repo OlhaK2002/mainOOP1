@@ -6,7 +6,6 @@
                 url: 'comment.php',
                 type: 'POST',
                 dataType: 'html',
-                //data: $("#form").serialize(),
                 data: {text: text, parent_id: parent_id},
                 success: function (result) {
                     console.log(result);

@@ -1,8 +1,9 @@
 <?php
 session_start();
 
-include 'class_htmlCode.php';
-$htmlCode = new htmlCode();
+include 'class_HtmlCode.php';
+
+$htmlCode = new HtmlCode();
 echo $htmlCode->beginCode();
 
 echo' <li><a href="signin.php">Авторизация</a></li><li><a href="registration.php">Регистрация</a></li>';
