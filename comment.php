@@ -9,12 +9,12 @@ $db->Connect();
 
 class Comment{
     protected $text;
-    protected $parent_id;
+    protected $parentid;
     protected $authorid;
     public function __construct($text, $parent_id, $author_id)
     {
         $this->text = $text;
-        $this->parent_id = $parent_id;
+        $this->parentid = $parent_id;
         $this->authorid = $author_id;
     }
 }
@@ -42,7 +42,7 @@ class intoDB extends Comment
             $this->sql = $this->db->getConnect()->prepare("INSERT INTO `comments` (`authorid`,`text`, `parent_id`) VALUES ( :authorid, :text, :parent_id)");
             $this->sql->bindParam(':authorid', $this->comment->authorid, PDO::PARAM_STR);
             $this->sql->bindParam(':text', $this->comment->text, PDO::PARAM_STR);
-            $this->sql->bindParam(':parent_id', $this->comment->parent_id, PDO::PARAM_INT);
+            $this->sql->bindParam(':parent_id', $this->comment->parentid, PDO::PARAM_INT);
             $this->sql->execute();
             $this->count++;
         }
@@ -55,7 +55,7 @@ class intoDB extends Comment
         {
             $this->sql = $this->db->getConnect()->prepare("SELECT * FROM `comments` WHERE `text`=:text and `parent_id`=:parent_id");
             $this->sql->bindParam(':text', $this->comment->text, PDO::PARAM_STR);
-            $this->sql->bindParam(':parent_id', $this->comment->parent_id, PDO::PARAM_INT);
+            $this->sql->bindParam(':parent_id', $this->comment->parentid, PDO::PARAM_INT);
             $this->sql->execute();
             return $this->sql;
         }

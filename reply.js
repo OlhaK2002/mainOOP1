@@ -1,5 +1,3 @@
-   // $('document').ready(function() {
-        //$("#form").submit(function() {
         $(document).on('click', 'button', function () {
             var id = $(this).attr('id');
             var text = $("#text_id" + id).val();

@@ -12,6 +12,7 @@ class Comments
     protected $result;
     protected $value0;
     protected $sql0;
+    protected $sql1;
     protected $array;
     protected $index;
 
@@ -29,7 +30,7 @@ class Comments
         $this->sql->execute();
 
         $this->array = $this->sql->FETCH(PDO::FETCH_ASSOC);
-        echo '<span style = "font-style: italic">' . $this->array['login'] . '</span>' . '&nbsp' . '<span style="font-style: italic; color: lightseagreen">' . " (" . $this->array['data'] . ") " . '</span>' . '</br>' . '&nbsp' . '&nbsp' . $this->array["text"];
+        echo '<span style = "font-style: italic">'.$this->array['login'] . '</span>' . '&nbsp' . '<span style="font-style: italic; color: lightseagreen">' . " (" . $this->array['data'] . ") " . '</span>' . '</br>' . '&nbsp' . '&nbsp' . $this->array["text"];
         $this->index = $this->array['id'];
         $this->sql1 = $this->db->getConnect()->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
         $this->sql1->bindParam(':value', $this->index, PDO::PARAM_INT);
@@ -83,8 +84,8 @@ if(!($_SESSION["login"]!="" and $_SESSION["password"]!="")) {
 
 else{
     echo ' <textarea required name="text" id="text_id0" class="form-control" placeholder="Введите Ваш комментарий..."></textarea>
-               <input type="hidden" id="parent_id0" class="parent" name="parent_id" value="0">
-               <button id="0" type="submit" class="btn btn-light">Отправить</button>';
+           <input type="hidden" id="parent_id0" class="parent" name="parent_id" value="0">
+           <button id="0" type="submit" class="btn btn-light">Отправить</button>';
 }
 $comments = new Comments($db);
 $comments->firstComments();
