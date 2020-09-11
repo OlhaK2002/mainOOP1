@@ -7,7 +7,6 @@ $db = new DB;
 $db->Connect();
 
 
-
 class Registration
 {
     protected $name;

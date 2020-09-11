@@ -88,6 +88,7 @@ class Result extends Verification
 
 }
 
+
 $result = new Result($verification);
 $result->valuePassword();
 

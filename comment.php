@@ -100,6 +100,7 @@ class Result extends intoDB
     }
 }
 
+
 $result = new Result($intoDB, $db);
 echo $result->replyComment();
 

@@ -31,17 +31,17 @@ class Comments
         $this->array = $this->sql->FETCH(PDO::FETCH_ASSOC);
         echo '<span style = "font-style: italic">' . $this->array['login'] . '</span>' . '&nbsp' . '<span style="font-style: italic; color: lightseagreen">' . " (" . $this->array['data'] . ") " . '</span>' . '</br>' . '&nbsp' . '&nbsp' . $this->array["text"];
         $this->index = $this->array['id'];
-        $sql1 = $this->db->getConnect()->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
-        $sql1->bindParam(':value', $this->index, PDO::PARAM_INT);
-        $sql1->execute();
+        $this->sql1 = $this->db->getConnect()->prepare("SELECT * FROM `comments` WHERE `parent_id`=:value");
+        $this->sql1->bindParam(':value', $this->index, PDO::PARAM_INT);
+        $this->sql1->execute();
         if($_SESSION["login"]!="" and $_SESSION["password"]!=""){
             $reply = new Reply($this->index);
             echo $reply->replyComment();
             echo '</div><ul><li><div id="comment' . $this->index . '"></div></li></ul>';
         }
-        $this->result = $sql1->rowCount();
+        $this->result = $this->sql1->rowCount();
         if ($this->result > 0) {
-            while ($this->array = $sql1->FETCH(PDO::FETCH_ASSOC))
+            while ($this->array = $this->sql1->FETCH(PDO::FETCH_ASSOC))
             {
                 echo '<ul>';
                 $this->getComments($this->array);
@@ -67,6 +67,7 @@ class Comments
         echo '<ul><li><div id="comment0"></div></li></ul>';
     }
 }
+
 $htmlCode = new htmlCode();
 echo $htmlCode->beginCode();
 

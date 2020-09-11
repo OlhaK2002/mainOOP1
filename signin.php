@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 include 'class_htmlCode.php';
 $htmlCode = new htmlCode();
