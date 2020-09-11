@@ -5,7 +5,8 @@ session_start();
 include 'database.php';
 $db = new DB;
 $db->Connect();
-class Registration extends DB
+
+class Registration
 {
     protected $name;
     protected $surname;
@@ -92,7 +93,6 @@ class Verification extends Registration
 }
 
 $verification = new Verification($db,"{$_POST['Name']}","{$_POST['Surname']}","{$_POST['Email']}","{$_POST['Login']}","{$_POST['Password1']}","{$_POST['Password2']}");
-
 $verification->evidenceEmail();
 $verification->evidenceLogin();
 $verification->evidencePasswords();
@@ -115,6 +115,7 @@ class hashPassword extends Verification
 }
 
 $password_hash = new hashPassword ($db,"{$_POST['Name']}","{$_POST['Surname']}","{$_POST['Email']}","{$_POST['Login']}","{$_POST['Password1']}","{$_POST['Password2']}");
+
 
 class procedureDB extends Verification
 {
